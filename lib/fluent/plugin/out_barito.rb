@@ -3,6 +3,9 @@ require 'rest-client'
 
 module Fluent
   class BaritoOutput < BufferedOutput
+
+    TIMESTAMP_FIELD = "@timestamp"
+
     Fluent::Plugin.register_output("barito", self)
 
     config_param :use_https, :bool, :default => false
@@ -57,6 +60,17 @@ module Fluent
         end
 
         next unless not @stream_id.nil? and @stream_id != ''
+
+        unless record.has_key?(TIMESTAMP_FIELD)
+          t = Time.now
+          unless time.nil?
+            if time.is_a?(Integer)
+              t = Time.at(time)
+            end
+          end
+          record[TIMESTAMP_FIELD] = t.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
+        end
+
         message = record.to_json
         url = generate_produce_url
 
