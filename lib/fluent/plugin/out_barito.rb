@@ -10,6 +10,8 @@ module Fluent
 
     config_param :use_https, :bool, :default => false
     config_param :use_kubernetes, :bool, :default => false
+
+    config_param :application_secret, :string, :default => ''
     config_param :stream_id, :string, :default => ''
     config_param :store_id, :string, :default => ''
     config_param :client_id, :string, :default => ''
@@ -17,6 +19,8 @@ module Fluent
     config_param :produce_host, :string, :default => ''
     config_param :produce_port, :string, :default => ''
     config_param :produce_topic, :string, :default => ''
+  
+    config_param :produce_url, :string, :default => ''
 
     def start
       super
@@ -24,7 +28,7 @@ module Fluent
     end
 
     def send_message(url, message)
-      RestClient.post url, message, {content_type: :json}
+      RestClient.post url, message, {content_type: :json, application_secret: @application_secret}
     end
 
     def format(tag, time, record)
@@ -32,6 +36,10 @@ module Fluent
     end
 
     def generate_produce_url
+      unless @produce_url.nil? || @produce_url == ''
+        return @produce_url
+      end
+
       if @use_https
         @protocol = 'https'
       end
@@ -39,7 +47,7 @@ module Fluent
       return "#{@protocol}://#{@produce_host}:#{@produce_port}/str/#{@stream_id}/st/#{@store_id}/fw/#{@forwarder_id}/cl/#{@client_id}/produce/#{@produce_topic}"
     end
 
-    def configure_params(params)
+    def configure_params_k8(params)
       @stream_id = params['baritoStreamId']
       @produce_host = params['baritoProduceHost']
       @produce_port = params['baritoProducePort']
@@ -56,10 +64,10 @@ module Fluent
         if @use_kubernetes
           next unless not record['kubernetes']['labels'].nil?
           params = record['kubernetes']['labels']
-          configure_params(params)
-        end
+          configure_params_k8(params)
 
-        next unless not @stream_id.nil? and @stream_id != ''
+          next unless not @stream_id.nil? and @stream_id != ''
+        end
 
         unless record.has_key?(TIMESTAMP_FIELD)
           t = Time.now
