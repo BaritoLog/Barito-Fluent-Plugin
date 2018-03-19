@@ -48,6 +48,7 @@ module Fluent
     end
 
     def configure_params_k8(params)
+      @application_secret = params['baritoApplicationSecret']
       @stream_id = params['baritoStreamId']
       @produce_host = params['baritoProduceHost']
       @produce_port = params['baritoProducePort']

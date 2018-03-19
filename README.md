@@ -35,6 +35,9 @@ $ fluent-plugin-config-format output barito
 You can copy and paste generated documents here.
 
 ### Fluentd configuration example
+
+## Without Kubernetes
+
 ```conf
 <source>
   @type tail
@@ -47,20 +50,48 @@ You can copy and paste generated documents here.
 
   use_https false
   use_kubernetes false
-  stream_id 1
-  produce_host barito-flow.local
-  produce_port 8080
-  produce_topic barito-topic
-  store_id 2
-  forwarder_id 3
-  client_id 4
+  application_secret "ABCDE1234"
+  produce_url "http://receiver-host:receiver-port/str/1/st/2/fw/3/cl/4/produce/some-topic"
   <buffer>
     flush_mode immediate
   </buffer>
 </match>
 ```
 
+## With Kubernetes
 If this gem used in Kubernetes daemonset, change `use_kubernetes` to `true`.
+
+```
+<match barito>
+  @type barito
+
+  use_https false
+  use_kubernetes true
+
+  application_secret "ABCDE1234"
+  stream_id "1"
+  store_id "2"
+  client_id "3"
+  forwarder_id "4"
+  produce_host "receiver-host"
+  produce_port "receiver-port"
+  produce_topic "some-topic"
+</match>
+```
+
+Or alternatively, we can set `kubernetes labels` in YAML :
+
+```
+labels:
+    baritoApplicationSecret: "ABCDE1234"
+    baritoProduceHost: "receiver-host"
+    baritoProducePort: "receiver-port"
+    baritoProduceTopic: "some-topic"
+    baritoStreamId: "1"
+    baritoStoreId: "2"
+    baritoForwarderId: "3"
+    baritoClientId: "4"
+```
 
 ## Copyright
 
