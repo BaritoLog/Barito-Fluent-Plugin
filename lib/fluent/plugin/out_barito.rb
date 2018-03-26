@@ -11,7 +11,7 @@ module Fluent
     config_param :use_https, :bool, :default => false
     config_param :use_kubernetes, :bool, :default => false
 
-    config_param :application_secret, :string, :default => ''
+    config_param :application_secret, :string, :default => nil
     config_param :stream_id, :string, :default => ''
     config_param :store_id, :string, :default => ''
     config_param :client_id, :string, :default => ''
@@ -19,12 +19,30 @@ module Fluent
     config_param :produce_host, :string, :default => ''
     config_param :produce_port, :string, :default => ''
     config_param :produce_topic, :string, :default => ''
-  
+
+    config_param :barito_market_url, :string, :default => nil
     config_param :produce_url, :string, :default => ''
 
     def start
       super
       @protocol = 'http'
+      get_config
+    end
+
+    def get_config
+      @barito_market_url ||= ENV['BARITO_MARKET_URL']
+      @application_secret ||= ENV['BARITO_MARKET_APPLICATION_SECRET']
+      response = RestClient.get @barito_market_url, {content_type: :json, application_secret: @application_secret}
+      body = response.body
+      unless body.nil?
+        client = JSON.parse(body)
+        @produce_url = client["client"]["produce_url"]
+        if @produce_url.nil?
+          log.error("Produce URL from BaritoMarket is nil")
+        else
+          log.info("Start with Produce URL : #{@produce_url}")
+        end
+      end
     end
 
     def send_message(url, message)
@@ -71,7 +89,7 @@ module Fluent
         end
 
         unless record.has_key?(TIMESTAMP_FIELD)
-          t = Time.now
+          t = Time.now.utc
           unless time.nil?
             if time.is_a?(Integer)
               t = Time.at(time)
