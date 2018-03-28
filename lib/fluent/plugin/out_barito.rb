@@ -5,6 +5,7 @@ module Fluent
   class BaritoOutput < BufferedOutput
 
     TIMESTAMP_FIELD = "@timestamp"
+    MESSAGE_FIELD = "@message"
 
     Fluent::Plugin.register_output("barito", self)
 
@@ -26,24 +27,24 @@ module Fluent
     def start
       super
       @protocol = 'http'
-      get_config
+      # get_config
     end
 
-    def get_config
-      @barito_market_url ||= ENV['BARITO_MARKET_URL']
-      @application_secret ||= ENV['BARITO_MARKET_APPLICATION_SECRET']
-      response = RestClient.get @barito_market_url, {content_type: :json, application_secret: @application_secret}
-      body = response.body
-      unless body.nil?
-        client = JSON.parse(body)
-        @produce_url = client["client"]["produce_url"]
-        if @produce_url.nil?
-          log.error("Produce URL from BaritoMarket is nil")
-        else
-          log.info("Start with Produce URL : #{@produce_url}")
-        end
-      end
-    end
+    # def get_config
+    #   @barito_market_url ||= ENV['BARITO_MARKET_URL']
+    #   @application_secret ||= ENV['BARITO_MARKET_APPLICATION_SECRET']
+    #   response = RestClient.get @barito_market_url, {content_type: :json, application_secret: @application_secret}
+    #   body = response.body
+    #   unless body.nil?
+    #     client = JSON.parse(body)
+    #     @produce_url = client["client"]["produce_url"]
+    #     if @produce_url.nil?
+    #       log.error("Produce URL from BaritoMarket is nil")
+    #     else
+    #       log.info("Start with Produce URL : #{@produce_url}")
+    #     end
+    #   end
+    # end
 
     def send_message(url, message)
       RestClient.post url, message, {content_type: :json, application_secret: @application_secret}
@@ -97,6 +98,8 @@ module Fluent
           end
           record[TIMESTAMP_FIELD] = t.strftime('%Y-%m-%dT%H:%M:%S.%L%z')
         end
+        
+        record[MESSAGE_FIELD] = record.delete "message"
 
         message = record.to_json
         url = generate_produce_url
