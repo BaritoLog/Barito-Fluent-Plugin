@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.name    = "fluent-plugin-barito"
   spec.version = "0.1.5"
   spec.authors = ["BaritoLog"]
-  spec.email   = [""]
+  spec.email   = ["pushm0v.development@gmail.com", "iman.tung@gmail.com"]
 
   spec.summary       = %q{Fluentd output plugin for BaritoLog}
   spec.description   = %q{This gem will forward output from fluentd to Barito-Flow}
