@@ -1,0 +1,5 @@
+dist: trusty
+language: ruby rvm:
+  - 2.4.3 
+before_script:
+  - bundle exec rspec
