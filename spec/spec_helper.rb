@@ -113,6 +113,7 @@ RSpec.configure do |config|
   require 'fluent/test'
   require 'fluent/test/driver/output'
   require 'fluent/plugin/out_barito_vm'
+  require 'fluent/plugin/out_barito_k8s'
   require 'fluent/plugin/barito_client_trail'
   require 'fluent/plugin/barito_timber'
   require 'timecop'
