@@ -1,48 +1,44 @@
 require 'spec_helper'
 
-describe 'Fluent::BaritoOutput' do
+describe 'Fluent::Plugin::Timber' do
   
   describe 'create_timber' do
+    
     it 'is valid parameter' do
-      curr_time = Time.parse('2018-01-31 12:25:36')
+      trail = Fluent::Plugin::ClientTrail.new(true)
       
-      Timecop.freeze(curr_time) do
-        output = Fluent::BaritoOutput.new
-        tag = "some_tag"
-        time = Time.parse('2018-01-31 12:22:26')
-        record = {"message" => "some_message"}
-        
-        timber = output.create_timber(tag, time, record)
-        expect(timber.tag).to eq(tag)
-        expect(timber.timestamp).to eq(time)
-        expect(timber.message).to eq("some_message")
-        
-        expect(timber.client_trail).to_not be_nil
-        expect(timber.client_trail.is_k8s).to be false
-        expect(timber.client_trail.sent_at).to eq(curr_time)
-      end
+      tag = "some_tag"
+      time = Time.parse('2018-01-31 12:22:26')
+      record = {"message" => "some_message"}
+      
+      timber = Fluent::Plugin::Timber::create_timber(tag, time, record, trail)
+      expect(timber.tag).to eq(tag)
+      expect(timber.timestamp).to eq(time)
+      expect(timber.message).to eq("some_message")
+      expect(timber.client_trail).to eq(trail)
+      
     end
     
     it 'using current timestamp if timber.timestamp nil' do
       time = Time.parse('2018-01-31 12:22:26')
       
       Timecop.freeze(time) do
-        output = Fluent::BaritoOutput.new
+        trail = Fluent::Plugin::ClientTrail.new(true)
         
         record = {"message" => "some_message"}
-        timber = output.create_timber("some_tag", nil, record)
+        timber = Fluent::Plugin::Timber::create_timber("some_tag", nil, record, trail)
         
         expect(timber.timestamp).to eq(time)
-        expect(timber.client_trail.hints).to include(Fluent::BaritoOutput::HINTS_NO_TIMESTAMP)
+        expect(timber.client_trail.hints).to include(Fluent::Plugin::Timber::HINTS_NO_TIMESTAMP)
       end
     end
     
     it 'using whole record if record[MESSAGE_KEY] emtpy' do
-      output = Fluent::BaritoOutput.new
+      trail = Fluent::Plugin::ClientTrail.new(true)
       
-      timber = output.create_timber("some_tag", nil, "invalid_message")
+      timber = Fluent::Plugin::Timber::create_timber("some_tag", nil, "invalid_message", trail)
       expect(timber.message).to eq("invalid_message")
-      expect(timber.client_trail.hints).to include(Fluent::BaritoOutput::HINTS_NO_MESSAGE)
+      expect(timber.client_trail.hints).to include(Fluent::Plugin::Timber::HINTS_NO_MESSAGE)
     end
   end
   
