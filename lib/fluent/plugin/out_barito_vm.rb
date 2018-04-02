@@ -4,7 +4,7 @@ require_relative 'barito_timber'
 require_relative 'barito_client_trail'
 
 module Fluent
-  class BaritoOutput < BufferedOutput
+  class BaritoVMOutput < BufferedOutput
 
     PLUGIN_NAME = "barito_vm"
     MESSAGE_KEY = "message"
