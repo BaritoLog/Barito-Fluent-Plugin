@@ -17,7 +17,7 @@ $ gem install fluent-plugin-barito
 Add following line to your Gemfile:
 
 ```ruby
-gem "fluent-plugin-barito"
+gem 'fluent-plugin-barito'
 ```
 
 And then execute:
@@ -40,6 +40,8 @@ You can copy and paste generated documents here.
 
 ## Without Kubernetes
 
+Use type `barito_vm` for deployment without kubernetes
+
 ```conf
 <source>
   @type tail
@@ -48,10 +50,8 @@ You can copy and paste generated documents here.
 </source>
 
 <match barito>
-  @type barito
+  @type barito_vm
 
-  use_https false
-  use_kubernetes false
   application_secret "ABCDE1234"
   produce_url "http://receiver-host:receiver-port/str/1/st/2/fw/3/cl/4/produce/some-topic"
   <buffer>
@@ -61,27 +61,18 @@ You can copy and paste generated documents here.
 ```
 
 ## With Kubernetes
-If this gem used in Kubernetes daemonset, change `use_kubernetes` to `true`.
+Change type to `barito_k8s` and `use_kubernetes` to `true`.
 
 ```
 <match barito>
-  @type barito
+  @type barito_k8s
 
   use_https false
   use_kubernetes true
-
-  application_secret "ABCDE1234"
-  stream_id "1"
-  store_id "2"
-  client_id "3"
-  forwarder_id "4"
-  produce_host "receiver-host"
-  produce_port "receiver-port"
-  produce_topic "some-topic"
 </match>
 ```
 
-Or alternatively, we can set `kubernetes labels` in YAML :
+and set `kubernetes labels` in YAML :
 
 ```
 labels:
