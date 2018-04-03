@@ -1,5 +1,7 @@
 # fluent-plugin-barito
 
+[![Build Status](https://travis-ci.org/BaritoLog/Barito-Fluent-Plugin.svg?branch=master)](https://travis-ci.org/BaritoLog/Barito-Fluent-Plugin)
+
 [Fluentd](https://fluentd.org/) output plugin for [BaritoLog](https://github.com/BaritoLog).
 
 ## Installation
