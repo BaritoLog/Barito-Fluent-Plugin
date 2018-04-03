@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name    = "fluent-plugin-barito"
-  spec.version = "0.1.5"
+  spec.version = "0.1.6"
   spec.authors = ["BaritoLog"]
   spec.email   = ["pushm0v.development@gmail.com", "iman.tung@gmail.com"]
 
@@ -22,10 +22,10 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake", "~> 12.0"
-  spec.add_development_dependency "rspec"
-  spec.add_development_dependency "timecop"
-  spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "coveralls"
+  spec.add_development_dependency 'rspec', '~> 3.4'
+  spec.add_development_dependency 'timecop', '~> 0.9.1'
+  spec.add_development_dependency 'simplecov', '~> 0.16.1'
+  spec.add_development_dependency 'coveralls', '~> 0.8.21'
   spec.add_development_dependency 'test-unit', '~> 3.2'
   
   spec.add_runtime_dependency "fluentd", "~> 0.12", ">= 0.12.0"

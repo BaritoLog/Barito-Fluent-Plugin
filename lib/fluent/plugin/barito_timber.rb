@@ -24,12 +24,12 @@ class Fluent::Plugin::Timber
     
     timber = Fluent::Plugin::Timber.new
     timber.tag = tag
-    timber.timestamp = time
+    timber.timestamp = Time.at(time).utc.strftime('%FT%TZ')
     timber.message = record[MESSAGE_KEY] if record.is_a?(Hash) and record.has_key?(MESSAGE_KEY)
     timber.client_trail = trail
     
     if timber.timestamp.nil? 
-      timber.timestamp = Time.now.utc
+      timber.timestamp = Time.now.utc.strftime('%FT%TZ')
       trail.hints << HINTS_NO_TIMESTAMP
     end
     

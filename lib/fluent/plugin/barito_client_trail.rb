@@ -4,9 +4,8 @@ class Fluent::Plugin::ClientTrail
   
   def initialize(is_k8s)
     @is_k8s = is_k8s
-    @sent_at = Time.now.utc
+    @sent_at = Time.now.utc.strftime('%FT%TZ')
     @hints = []
-    
   end
   
   def to_hash
