@@ -61,14 +61,13 @@ Use type `barito_vm` for deployment without kubernetes
 ```
 
 ## With Kubernetes
-Change type to `barito_k8s` and `use_kubernetes` to `true`.
+Change type to `barito_k8s`.
 
 ```
 <match barito>
   @type barito_k8s
 
   use_https false
-  use_kubernetes true
 </match>
 ```
 
