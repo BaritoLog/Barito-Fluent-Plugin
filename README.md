@@ -47,6 +47,9 @@ Use type `barito_vm` for deployment without kubernetes
   @type tail
   tag "barito"
   path /path/to/file.log
+  <parser>
+    @type none
+  </parser>
 </source>
 
 <match barito>
