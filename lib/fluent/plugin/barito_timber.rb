@@ -6,26 +6,34 @@ class Fluent::Plugin::TimberFactory
   
   def self.create_timber(tag, time, record, trail)
     
-    timestamp = Time.at(time).utc.strftime('%FT%TZ') # TODO: get from record
+    begin
+      timber = JSON.parse(record['message'])
+    rescue 
+    end
+    
+    unless timber.is_a?(Hash) then
+      timber = Hash.new
+    end
+    
+    
     message = record[MESSAGE_KEY] if record.is_a?(Hash) and record.has_key?(MESSAGE_KEY)
     client_trail = trail
     
-    if timestamp.nil? 
-      timestamp = Time.now.utc.strftime('%FT%TZ')
-      trail.hints << HINTS_NO_TIMESTAMP
-    end
+    
+    timestamp = Time.now.utc.strftime('%FT%TZ')
+  
     
     if message.nil? or message.empty? 
       message = record.to_str
       trail.hints << HINTS_NO_MESSAGE
     end
     
-    {
-      'tag' => tag,
-      '@message' => message, 
-      '@timestamp' => timestamp,
-      'client_trail' => client_trail.to_hash
-    }
+    timber['tag'] =  tag
+    timber['@message'] = message
+    timber['@timestamp'] = timestamp
+    timber['client_trail'] = client_trail.to_hash
+    
+    timber
     
   end
 end

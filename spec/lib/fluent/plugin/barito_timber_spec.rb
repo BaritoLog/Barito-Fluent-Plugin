@@ -1,45 +1,51 @@
 require 'spec_helper'
 
-describe 'Fluent::Plugin::Timber' do
+describe 'Fluent::Plugin::TimberFactory' do
   
   describe 'create_timber' do
     
-    it 'is valid parameter' do
-      trail = Fluent::Plugin::ClientTrail.new(true)
+    context 'message' do
       
-      tag = "some_tag"
-      time = Time.parse('2018-01-31 12:22:26')
-      record = {"message" => "some_message"}
-      
-      timber = Fluent::Plugin::Timber::create_timber(tag, time, record, trail)
-      expect(timber.tag).to eq(tag)
-      expect(timber.timestamp).to eq(time)
-      expect(timber.message).to eq("some_message")
-      expect(timber.client_trail).to eq(trail)
-      
-    end
-    
-    it 'using current timestamp if timber.timestamp nil' do
-      time = Time.parse('2018-01-31 12:22:26')
-      
-      Timecop.freeze(time) do
+      it 'is json' do
         trail = Fluent::Plugin::ClientTrail.new(true)
+        tag = "some_tag"
+        record = {'message' => '{"booking_id":1234,"foo":"bar"}'}
         
-        record = {"message" => "some_message"}
-        timber = Fluent::Plugin::Timber::create_timber("some_tag", nil, record, trail)
-        
-        expect(timber.timestamp).to eq(time)
-        expect(timber.client_trail.hints).to include(Fluent::Plugin::Timber::HINTS_NO_TIMESTAMP)
+        timber = Fluent::Plugin::TimberFactory::create_timber(tag, nil, record, trail)
+        expect(timber['booking_id']).to eq(1234)
+        expect(timber['foo']).to eq('bar')
       end
+      
+      it 'is quoted string' do
+        trail = Fluent::Plugin::ClientTrail.new(true)
+        tag = "some_tag"
+        record = {'message' => '"something"'}
+        timber = Fluent::Plugin::TimberFactory::create_timber(tag, nil, record, trail)
+        expect(timber['@message']).to eq('"something"')
+      end
+      
+      it 'is not json' do
+        trail = Fluent::Plugin::ClientTrail.new(true)
+        tag = "some_tag"
+        record = {"message" => "some_message"}
+        
+        timber = Fluent::Plugin::TimberFactory::create_timber(tag, nil, record, trail)
+        expect(timber['tag']).to eq(tag)
+        expect(timber['@message']).to eq("some_message")
+        expect(timber['client_trail']).to eq(trail.to_hash)
+      end  
+      
+      it 'has no message' do
+        trail = Fluent::Plugin::ClientTrail.new(true)
+        timber = Fluent::Plugin::TimberFactory::create_timber("some_tag", nil, "invalid_message", trail)
+        expect(timber['@message']).to eq("invalid_message")
+        expect(timber['client_trail']['hints']).to include(Fluent::Plugin::TimberFactory::HINTS_NO_MESSAGE)
+      end
+      
     end
     
-    it 'using whole record if record[MESSAGE_KEY] emtpy' do
-      trail = Fluent::Plugin::ClientTrail.new(true)
-      
-      timber = Fluent::Plugin::Timber::create_timber("some_tag", nil, "invalid_message", trail)
-      expect(timber.message).to eq("invalid_message")
-      expect(timber.client_trail.hints).to include(Fluent::Plugin::Timber::HINTS_NO_MESSAGE)
-    end
+    
+    
   end
   
 end
