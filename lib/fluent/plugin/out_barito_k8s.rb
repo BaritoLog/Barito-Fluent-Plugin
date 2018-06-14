@@ -40,7 +40,7 @@ module Fluent
         trail = Fluent::Plugin::ClientTrail.new(true)
         
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
-        header = {content_type: :json, application_secret: secret}
+        header = {content_type: :json, 'X-App-Secret' => secret}
         
         RestClient.post url, timber.to_json, header
       end
