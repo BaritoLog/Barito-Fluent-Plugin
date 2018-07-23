@@ -24,7 +24,7 @@ class Fluent::Plugin::TimberFactory
   
     
     if message.nil? or message.empty? 
-      message = record.to_str
+      message = record.to_s
       trail.hints << HINTS_NO_MESSAGE
     end
     
