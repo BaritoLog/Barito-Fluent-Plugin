@@ -6,7 +6,7 @@ class Fluent::Plugin::TimberFactory
   
   def self.create_timber(tag, time, record, trail)
     begin
-      timber = JSON.parse(record)
+      timber = JSON.parse(record['message'])
     rescue 
     end
     
