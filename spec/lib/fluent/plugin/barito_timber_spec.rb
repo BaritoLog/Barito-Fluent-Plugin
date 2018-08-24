@@ -9,7 +9,7 @@ describe 'Fluent::Plugin::TimberFactory' do
       it 'is json' do
         trail = Fluent::Plugin::ClientTrail.new(true)
         tag = "some_tag"
-        record = {'message' => '{"booking_id":1234,"foo":"bar"}'}
+        record = '{"booking_id":1234, "foo":"bar"}'
         
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, nil, record, trail)
         expect(timber['booking_id']).to eq(1234)
