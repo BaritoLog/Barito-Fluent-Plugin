@@ -25,15 +25,33 @@ module Fluent
     # Overide from BufferedOutput
     def write(chunk)
       chunk.msgpack_each do |tag, time, record|
-        params = record['kubernetes']['annotations']
 
+        # Kubernetes annotations
+        k8s_metadata = record['kubernetes']
+        params = k8s_metadata['annotations']
+
+        # Skip record if no annotations found
         next if params.nil?
         url = produce_url(params)
         secret = application_secret(params)
 
         next if url.nil? or secret.nil?
-        trail = Fluent::Plugin::ClientTrail.new(false)
+
+        # Delete kubernetes & docker field
+        record.delete('kubernetes')
+        record.delete('docker')
+
+        trail = Fluent::Plugin::ClientTrail.new(true)
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
+
+        # Add kubernetes information
+        timber['k8s_metadata'] = {
+          'pod_name' => k8s_metadata['pod_name'],
+          'namespace_name' => k8s_metadata['namespace_name'],
+          'container_name' => k8s_metadata['container_name'],
+          'host' => k8s_metadata['host']
+        }
+
         header = {content_type: :json, 'X-App-Secret' => secret}
 
         RestClient.post url, timber.to_json, header
