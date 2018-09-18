@@ -1,6 +1,5 @@
 require 'fluent/output'
 require 'rest-client'
-require 'socket'
 require_relative 'barito_timber'
 require_relative 'barito_client_trail'
 
@@ -28,12 +27,7 @@ module Fluent
     def write(chunk)
       chunk.msgpack_each do |tag, time, record|
         trail = Fluent::Plugin::ClientTrail.new(false)
-        
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
-
-        # Add hostname
-        timber['client_trail']['hostname'] = Socket.gethostname
-
         header = {content_type: :json, 'X-App-Secret' => @application_secret}
         
         RestClient.post @produce_url, timber.to_json, header
