@@ -25,12 +25,8 @@ module Fluent
 
     # Overide from BufferedOutput
     def write(chunk)
-      
-      # logger = Logger.new(STDOUT)
-      
       chunk.msgpack_each do |tag, time, record|
         trail = Fluent::Plugin::ClientTrail.new(false)
-        
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
         header = {content_type: :json, 'X-App-Secret' => @application_secret}
         
