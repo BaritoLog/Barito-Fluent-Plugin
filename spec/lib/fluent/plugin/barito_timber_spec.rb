@@ -41,11 +41,7 @@ describe 'Fluent::Plugin::TimberFactory' do
         expect(timber['@message']).to eq("invalid_message")
         expect(timber['client_trail']['hints']).to include(Fluent::Plugin::TimberFactory::HINTS_NO_MESSAGE)
       end
-      
     end
-    
-    
-    
   end
   
 end
