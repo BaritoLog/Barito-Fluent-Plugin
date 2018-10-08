@@ -37,15 +37,13 @@ module Fluent
 
         next if url.nil? or secret.nil?
 
-        # Delete kubernetes & docker field
-        record.delete('kubernetes')
-        record.delete('docker')
-
+        record = clean_attribute(record)
         trail = Fluent::Plugin::ClientTrail.new(true)
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
+        new_timber = merge_log_attribute(timber)
 
         # Add kubernetes information
-        timber['k8s_metadata'] = {
+        new_timber['k8s_metadata'] = {
           'pod_name' => k8s_metadata['pod_name'],
           'namespace_name' => k8s_metadata['namespace_name'],
           'container_name' => k8s_metadata['container_name'],
@@ -54,7 +52,7 @@ module Fluent
 
         header = {content_type: :json, 'X-App-Secret' => secret}
 
-        RestClient.post url, timber.to_json, header
+        RestClient.post url, new_timber.to_json, header
       end
     end
 
@@ -64,6 +62,27 @@ module Fluent
 
     def application_secret(params)
       params[LABEL_APP_SECRET]
+    end
+
+    def clean_attribute(record)
+      # Delete kubernetes & docker field
+      record.delete('kubernetes')
+      record.delete('docker')
+      record
+    end
+
+    def merge_log_attribute(record)
+      message_log = nil
+      begin
+        message_log = JSON.parse(record['log'])
+      rescue
+      end
+
+      if !message_log.nil?
+        return record.merge(message_log)
+      end
+
+      record
     end
   end
 end
