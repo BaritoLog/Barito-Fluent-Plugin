@@ -8,6 +8,8 @@ module Fluent
 
     PLUGIN_NAME = 'barito_k8s'
     LABEL_APP_SECRET = 'barito.applicationSecret'
+    LABEL_APP_GROUP_SECRET = 'barito.appGroupSecret'
+    LABEL_APP_NAME = 'barito.applicationName'
     LABEL_PRODUCE_URL = 'barito.produceUrl'
 
     Fluent::Plugin.register_output(PLUGIN_NAME, self)
@@ -33,9 +35,22 @@ module Fluent
         # Skip record if no annotations found
         next if params.nil?
         url = produce_url(params)
-        secret = application_secret(params)
+        app_secret = application_secret(params)
+        app_group_secret = app_group_secret(params)
+        app_name = app_name(params)
 
-        next if url.nil? or secret.nil?
+        next if url.nil?
+
+        if app_secret.nil?
+          next if app_group_secret.nil? or app_name.nil?
+          header = {
+            content_type: :json,
+            'X-App-Group-Secret' => app_group_secret,
+            'App-Name' => app_name
+          }
+        else
+          header = {content_type: :json, 'X-App-Secret' => app_secret}
+        end
 
         record = clean_attribute(record)
         trail = Fluent::Plugin::ClientTrail.new(true)
@@ -50,8 +65,6 @@ module Fluent
           'host' => k8s_metadata['host']
         }
 
-        header = {content_type: :json, 'X-App-Secret' => secret}
-
         RestClient.post url, new_timber.to_json, header
       end
     end
@@ -62,6 +75,14 @@ module Fluent
 
     def application_secret(params)
       params[LABEL_APP_SECRET]
+    end
+
+    def app_group_secret(params)
+      params[LABEL_APP_GROUP_SECRET]
+    end
+
+    def app_name(params)
+      params[LABEL_APP_NAME]
     end
 
     def clean_attribute(record)
