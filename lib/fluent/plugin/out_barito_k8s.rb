@@ -9,7 +9,7 @@ module Fluent
     PLUGIN_NAME = 'barito_k8s'
     LABEL_APP_SECRET = 'barito.applicationSecret'
     LABEL_APP_GROUP_SECRET = 'barito.appGroupSecret'
-    LABEL_APP_NAME = 'barito.applicationName'
+    LABEL_APP_NAME = 'barito.appName'
     LABEL_PRODUCE_URL = 'barito.produceUrl'
 
     Fluent::Plugin.register_output(PLUGIN_NAME, self)
