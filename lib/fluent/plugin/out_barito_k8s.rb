@@ -8,8 +8,8 @@ module Fluent
 
     PLUGIN_NAME = 'barito_k8s'
     LABEL_APP_SECRET = 'barito.applicationSecret'
-    LABEL_APP_GROUP_SECRET = 'barito.appGroupSecret'
-    LABEL_APP_NAME = 'barito.appName'
+    LABEL_APP_GROUP_SECRET = 'barito.applicationGroupSecret'
+    LABEL_APP_NAME = 'barito.applicationName'
     LABEL_PRODUCE_URL = 'barito.produceUrl'
 
     Fluent::Plugin.register_output(PLUGIN_NAME, self)
@@ -36,8 +36,8 @@ module Fluent
         next if params.nil?
         url = produce_url(params)
         app_secret = application_secret(params)
-        app_group_secret = app_group_secret(params)
-        app_name = app_name(params)
+        app_group_secret = application_group_secret(params)
+        app_name = application_name(params)
 
         next if url.nil?
 
@@ -46,7 +46,7 @@ module Fluent
           header = {
             content_type: :json,
             'X-App-Group-Secret' => app_group_secret,
-            'App-Name' => app_name
+            'X-App-Name' => app_name
           }
         else
           header = {content_type: :json, 'X-App-Secret' => app_secret}
@@ -77,11 +77,11 @@ module Fluent
       params[LABEL_APP_SECRET]
     end
 
-    def app_group_secret(params)
+    def application_group_secret(params)
       params[LABEL_APP_GROUP_SECRET]
     end
 
-    def app_name(params)
+    def application_name(params)
       params[LABEL_APP_NAME]
     end
 

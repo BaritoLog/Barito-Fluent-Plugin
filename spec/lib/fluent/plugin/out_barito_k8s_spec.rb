@@ -27,26 +27,26 @@ describe 'Fluent::BaritoK8sOutput' do
     end
   end
 
-  describe '.app_group_secret' do
+  describe '.application_group_secret' do
     it do
       out = Fluent::BaritoK8sOutput.new
 
       k8s_labels = {
         Fluent::BaritoK8sOutput::LABEL_APP_GROUP_SECRET => 'some_secret'
       }
-      secret = out.app_group_secret(k8s_labels)
+      secret = out.application_group_secret(k8s_labels)
       expect(secret).to eq 'some_secret'
     end
   end
 
-  describe '.app_name' do
+  describe '.application_name' do
     it do
       out = Fluent::BaritoK8sOutput.new
 
       k8s_labels = {
         Fluent::BaritoK8sOutput::LABEL_APP_NAME => 'some_name'
       }
-      app_name = out.app_name(k8s_labels)
+      app_name = out.application_name(k8s_labels)
       expect(app_name).to eq 'some_name'
     end
   end
