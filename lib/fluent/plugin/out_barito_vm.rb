@@ -31,7 +31,7 @@ module Fluent
         trail = Fluent::Plugin::ClientTrail.new(false)
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
 
-        if @application_secret.nil? or @application_secret.blank?
+        if @application_secret.nil? or @application_secret.empty?
           next if @application_group_secret.nil? or @application_name.nil?
           header = {
             content_type: :json,
