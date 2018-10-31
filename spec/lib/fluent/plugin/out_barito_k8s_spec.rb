@@ -55,11 +55,9 @@ describe 'Fluent::BaritoK8sOutput' do
     it do
       out = Fluent::BaritoK8sOutput.new
 
-      record = { "log" => "{\"some_attr\":\"info\",\"nested\":{\"nested_attr\":\"nested_value\"}}", "other_attr" => "other_value"}
       new_record = out.merge_log_attribute(record)
 
       expect(new_record['some_attr']).to eq("info")
-      expect(new_record['nested']['nested_attr']).to eq("nested_value")
       expect(new_record['other_attr']).to eq("other_value")
     end
   end

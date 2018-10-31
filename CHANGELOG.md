@@ -1,5 +1,9 @@
 # Changelog
 
+**0.3.1**
+
+- Revert nested parsing behaviour
+
 **0.3.0**
 
 - Handle batch produce (from VM)

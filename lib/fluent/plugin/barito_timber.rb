@@ -22,15 +22,6 @@ class Fluent::Plugin::TimberFactory
     if message.nil? or message.empty? 
       message = record.to_s
       trail.hints << HINTS_NO_MESSAGE
-    else
-      new_message = nil
-      begin
-        new_message = JSON.parse(message)
-      rescue
-      end
-      if not new_message.nil? and new_message.is_a?(Hash)
-        message = new_message
-      end
     end
 
     timber['tag'] =  tag
