@@ -4,9 +4,9 @@ require_relative 'barito_timber'
 require_relative 'barito_client_trail'
 
 module Fluent
-  class BaritoVMOutput < BufferedOutput
+  class BaritoBatchVMOutput < BufferedOutput
 
-    PLUGIN_NAME = "barito_vm"
+    PLUGIN_NAME = "barito_batch_vm"
 
     Fluent::Plugin.register_output(PLUGIN_NAME, self)
 
