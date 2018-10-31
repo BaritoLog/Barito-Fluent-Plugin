@@ -1,5 +1,9 @@
 # Changelog
 
+**0.3.0**
+
+- Handle batch produce (from VM)
+
 **0.2.1**
 
 - Change blank? with empty?
