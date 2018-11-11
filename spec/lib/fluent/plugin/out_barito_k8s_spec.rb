@@ -55,6 +55,11 @@ describe 'Fluent::BaritoK8sOutput' do
     it do
       out = Fluent::BaritoK8sOutput.new
 
+      record = {
+        "kubernetes" => {"some_attr" => "some_value"}, 
+        "docker" => "docker_value", 
+        "log" => "{\"some_attr\": \"info\", \"other_attr\": \"other_value\"}"
+      }
       new_record = out.merge_log_attribute(record)
 
       expect(new_record['some_attr']).to eq("info")
