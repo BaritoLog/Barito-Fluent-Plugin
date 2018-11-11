@@ -1,5 +1,9 @@
 # Changelog
 
+**0.3.2**
+
+- Handle batch produce (from k8s)
+
 **0.3.1**
 
 - Revert nested parsing behaviour
