@@ -117,5 +117,7 @@ RSpec.configure do |config|
   require 'fluent/plugin/out_barito_batch_k8s'
   require 'fluent/plugin/barito_client_trail'
   require 'fluent/plugin/barito_timber'
+  require 'fluent/plugin/barito_transport'
   require 'timecop'
+  require 'webmock/rspec'
 end

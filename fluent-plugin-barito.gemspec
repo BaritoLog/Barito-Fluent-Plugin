@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '~> 0'
   spec.add_development_dependency 'coveralls', '~> 0.8.21'
   spec.add_development_dependency 'test-unit', '~> 3.2'
+  spec.add_development_dependency 'webmock', '~> 3.4'
 
   spec.add_runtime_dependency "fluentd", "~> 0.12", ">= 0.12.0"
   spec.add_runtime_dependency "rest-client", "~> 2"

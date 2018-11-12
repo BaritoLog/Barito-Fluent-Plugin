@@ -1,7 +1,7 @@
 require 'fluent/output'
-require 'rest-client'
 require_relative 'barito_timber'
 require_relative 'barito_client_trail'
+require_relative 'barito_transport'
 
 module Fluent
   class BaritoK8sOutput < BufferedOutput
@@ -53,6 +53,7 @@ module Fluent
         end
 
         record = clean_attribute(record)
+        transport = Fluent::Plugin::BaritoTransport.new(url, log)
         trail = Fluent::Plugin::ClientTrail.new(true)
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
         new_timber = merge_log_attribute(timber)
@@ -65,7 +66,7 @@ module Fluent
           'host' => k8s_metadata['host']
         }
 
-        RestClient.post url, new_timber.to_json, header
+        transport.send(new_timber, header)
       end
     end
 
