@@ -1,5 +1,9 @@
 # Changelog
 
+**0.3.3**
+
+- Print verbose error on logs when receiving failed response from the server
+
 **0.3.2**
 
 - Handle batch produce (from k8s)

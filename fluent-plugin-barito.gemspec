@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name    = "fluent-plugin-barito"
-  spec.version = "0.3.2"
+  spec.version = "0.3.3"
   spec.authors = ["BaritoLog"]
   spec.email   = ["pushm0v.development@gmail.com", "iman.tung@gmail.com"]
 
