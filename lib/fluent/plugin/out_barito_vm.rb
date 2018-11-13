@@ -1,7 +1,7 @@
 require 'fluent/output'
-require 'rest-client'
 require_relative 'barito_timber'
 require_relative 'barito_client_trail'
+require_relative 'barito_transport'
 
 module Fluent
   class BaritoVMOutput < BufferedOutput
@@ -28,6 +28,7 @@ module Fluent
     # Overide from BufferedOutput
     def write(chunk)
       chunk.msgpack_each do |tag, time, record|
+        transport = Fluent::Plugin::BaritoTransport.new(@produce_url, log)
         trail = Fluent::Plugin::ClientTrail.new(false)
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
 
@@ -41,8 +42,7 @@ module Fluent
         else
           header = {content_type: :json, 'X-App-Secret' => @application_secret}
         end
-
-        RestClient.post @produce_url, timber.to_json, header
+        transport.send(timber, header)
       end
     end
   end
