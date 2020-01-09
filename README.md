@@ -64,28 +64,30 @@ Use type `barito_vm` for deployment without kubernetes
 ```
 
 ## With Kubernetes
-Change type to `barito_k8s`.
+Change type to `barito_batch_k8s`.
 
 ```
-<match barito>
-  @type barito_k8s
-
-  use_https false
+<match kubernetes.var.log.containers.server-**.log>
+  @type barito_batch_k8s
+  name test_container
+  cluster_name test_cluster
+  application_name test_application_name
+  application_group_secret xxxxxx
+  produce_url https://router.barito/produce_batch
+  <buffer>
+    flush_at_shutdown false
+    flush_thread_count 8
+    flush_thread_interval 1
+    flush_thread_burst_interval 1
+    flush_mode interval
+    flush_interval 1s
+    queued_chunks_limit_size 1
+    overflow_action drop_oldest_chunk
+    retry_timeout 0s
+    retry_max_times 0
+    disable_chunk_backup true
+  </buffer>
 </match>
-```
-
-and set `kubernetes labels` in YAML :
-
-```
-labels:
-    baritoApplicationSecret: "ABCDE1234"
-    baritoProduceHost: "receiver-host"
-    baritoProducePort: "receiver-port"
-    baritoProduceTopic: "some-topic"
-    baritoStreamId: "1"
-    baritoStoreId: "2"
-    baritoForwarderId: "3"
-    baritoClientId: "4"
 ```
 
 ## Copyright

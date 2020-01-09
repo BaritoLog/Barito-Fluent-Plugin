@@ -14,6 +14,7 @@ module Fluent
     config_param :application_group_secret, :string, :default => nil
     config_param :application_name, :string, :default => nil
     config_param :produce_url, :string, :default => ''
+    config_param :cluster_name, :string, :default => ''
 
     # Overide from BufferedOutput
     def start
@@ -47,7 +48,8 @@ module Fluent
           'pod_name' => k8s_metadata['pod_name'],
           'namespace_name' => k8s_metadata['namespace_name'],
           'container_name' => k8s_metadata['container_name'],
-          'host' => k8s_metadata['host']
+          'host' => k8s_metadata['host'],
+          'cluster_name' => @cluster_name
         }
 
         data['items'] << new_timber
