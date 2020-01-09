@@ -1,5 +1,9 @@
 # Changelog
 
+**0.3.4**
+
+- Add cluster name field (from k8s)
+  
 **0.3.3**
 
 - Print verbose error on logs when receiving failed response from the server
