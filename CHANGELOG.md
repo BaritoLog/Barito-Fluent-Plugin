@@ -1,5 +1,9 @@
 # Changelog
 
+**0.3.5**
+
+- Add gzip/compressed feature before sent timber
+
 **0.3.4**
 
 - Add cluster name field (from k8s)
