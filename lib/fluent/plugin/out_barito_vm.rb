@@ -42,7 +42,7 @@ module Fluent
         else
           header = {content_type: :json, 'X-App-Secret' => @application_secret}
         end
-        transport.send(timber, header)
+        transport.send_compressed(timber, header)
       end
     end
   end

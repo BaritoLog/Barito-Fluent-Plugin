@@ -1,4 +1,5 @@
 require 'rest-client'
+require 'zlib'
 
 class Fluent::Plugin::BaritoTransport
 
@@ -17,4 +18,16 @@ class Fluent::Plugin::BaritoTransport
     end
   end
 
+  def send_compressed(timber, header)
+    begin
+      header['Content-Encoding'] = 'gzip'
+
+      gz = Zlib::GzipWriter.new(StringIO.new)
+      gz << timber.to_json
+      RestClient.post @produce_url, gz.close.string, header
+    rescue Exception => e
+      puts(header)
+      @logger.error [e.message, e.response, Hash[header.collect{|k,v| [k.to_s, v]}]].join(', ')
+    end
+  end
 end
