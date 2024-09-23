@@ -3,9 +3,9 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name    = "fluent-plugin-barito"
-  spec.version = "0.3.5"
+  spec.version = "0.4.0"
   spec.authors = ["BaritoLog"]
-  spec.email   = ["pushm0v.development@gmail.com", "iman.tung@gmail.com"]
+  spec.email   = ["fadli.nurhasan@gojek.com", "beni.harmadi@gojek.com"]
 
   spec.summary       = %q{Fluentd output plugin for BaritoLog}
   spec.description   = %q{This gem will forward output from fluentd to Barito-Flow}

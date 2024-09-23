@@ -1,5 +1,9 @@
 # Changelog
 
+**0.4.0**
+
+- Add custom output that can use dynamic application name format
+
 **0.3.5**
 
 - Add gzip/compressed feature before sent timber
