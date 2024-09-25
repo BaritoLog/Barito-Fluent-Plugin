@@ -1,16 +1,19 @@
 require 'spec_helper'
 
-describe 'Fluent::BaritoBatchK8sOutput' do
+describe 'Fluent::BaritoBatchDynamicAppK8sOutput' do
+  before do
+    @plugin = Fluent::BaritoDynamicAppBatchK8sOutput.new
+    @plugin.instance_variable_set(:@application_name_format, 'clusterA-${record["kubernetes"]["namespace_name"]}-${record["kubernetes"]["labels"]["app_name"]}')
+  end
+
   describe '.merge_log_attribute' do
     it do
-      out = Fluent::BaritoBatchK8sOutput.new
-
       record = {
         "kubernetes" => {"some_attr" => "some_value"},
         "docker" => "docker_value",
         "log" => "{\"some_attr\": \"info\", \"other_attr\": \"other_value\"}"
       }
-      new_record = out.merge_log_attribute(record)
+      new_record = @plugin.merge_log_attribute(record)
 
       expect(new_record['some_attr']).to eq("info")
       expect(new_record['other_attr']).to eq("other_value")
@@ -19,14 +22,12 @@ describe 'Fluent::BaritoBatchK8sOutput' do
 
   describe '.clean_attribute' do
     it do
-      out = Fluent::BaritoBatchK8sOutput.new
-
       record = {
         "kubernetes" => {"some_attr" => "some_value"},
         "docker" => "docker_value",
         "attr" => "some_value"
       }
-      new_record = out.clean_attribute(record)
+      new_record = @plugin.clean_attribute(record)
 
       expect(new_record['kubernetes']).to be_nil
       expect(new_record['docker']).to be_nil
@@ -35,10 +36,6 @@ describe 'Fluent::BaritoBatchK8sOutput' do
   end
 
   describe '#expand_application_name_format' do
-    before do
-      plugin.instance_variable_set(:@application_name_format, 'clusterA-${record["kubernetes"]["namespace_name"]}-${record["kubernetes"]["labels"]["app_name"]}')
-    end
-
     it 'expands the application name format with values from the record' do
       record = {
         'kubernetes' => {
@@ -49,15 +46,15 @@ describe 'Fluent::BaritoBatchK8sOutput' do
         }
       }
 
-      expanded_name = plugin.expand_application_name_format(record)
+      expanded_name = @plugin.expand_application_name_format(record)
       expect(expanded_name).to eq('clusterA-namespace1-app1')
     end
 
     it 'returns the format string if no placeholders are present' do
-      plugin.instance_variable_set(:@application_name_format, 'static_name')
+      @plugin.instance_variable_set(:@application_name_format, 'static_name')
       record = {}
 
-      expanded_name = plugin.expand_application_name_format(record)
+      expanded_name = @plugin.expand_application_name_format(record)
       expect(expanded_name).to eq('static_name')
     end
 
@@ -68,16 +65,16 @@ describe 'Fluent::BaritoBatchK8sOutput' do
         }
       }
 
-      expanded_name = plugin.expand_application_name_format(record)
+      expanded_name = @plugin.expand_application_name_format(record)
       expect(expanded_name).to eq('clusterA-namespace1-')
     end
 
     it 'returns nil if the format string is nil' do
-      plugin.instance_variable_set(:@application_name_format, nil)
+      @plugin.instance_variable_set(:@application_name_format, "")
       record = {}
 
-      expanded_name = plugin.expand_application_name_format(record)
-      expect(expanded_name).to be_nil
+      expanded_name = @plugin.expand_application_name_format(record)
+      expect(expanded_name).to be_empty
     end
   end
 

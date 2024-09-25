@@ -93,8 +93,6 @@ module Fluent
       record
     end
 
-    private
-
     def expand_application_name_format(record)
       application_name = @application_name_format.dup
 
