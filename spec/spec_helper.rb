@@ -115,6 +115,7 @@ RSpec.configure do |config|
   require 'fluent/plugin/out_barito_vm'
   require 'fluent/plugin/out_barito_k8s'
   require 'fluent/plugin/out_barito_batch_k8s'
+  require 'fluent/plugin/out_barito_dynamic_app_batch_k8s'
   require 'fluent/plugin/barito_client_trail'
   require 'fluent/plugin/barito_timber'
   require 'fluent/plugin/barito_transport'
