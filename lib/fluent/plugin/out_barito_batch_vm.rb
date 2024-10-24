@@ -42,6 +42,7 @@ module Fluent
           extralabels.each do |key, value|
             timber[key] = value
           end
+          timber['client_trail'].merge!(@extralabels)
         end
 
         data['items'] << timber

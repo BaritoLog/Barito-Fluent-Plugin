@@ -55,10 +55,7 @@ module Fluent
         
         # Add extra labels from config_params
         unless @extralabels.empty?
-          extralabels = @extralabels.to_h
-          extralabels.each do |key, value|
-            timber[key] = value
-          end
+          new_timber['client_trail'].merge!(@extralabels)
         end
 
         data['items'] << new_timber

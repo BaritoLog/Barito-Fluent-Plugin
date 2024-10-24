@@ -14,6 +14,7 @@ module Fluent
     config_param :application_group_secret, :string, :default => nil
     config_param :produce_url, :string, :default => ''
     config_param :cluster_name, :string, :default => ''
+    config_param :extralabels, :hash, :default => {}
 
     # Overide from BufferedOutput
     def start
@@ -55,6 +56,11 @@ module Fluent
           'host' => k8s_metadata['host'],
           'cluster_name' => @cluster_name
         }
+
+        # Add extra labels from config_params
+        unless @extralabels.empty?
+          new_timber['client_trail'].merge!(@extralabels)
+        end
 
         if data[application_name].nil?
           data[application_name] = { 'items' => [] }
