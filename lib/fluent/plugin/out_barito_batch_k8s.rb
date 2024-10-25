@@ -15,7 +15,7 @@ module Fluent
     config_param :application_name, :string, :default => nil
     config_param :produce_url, :string, :default => ''
     config_param :cluster_name, :string, :default => ''
-    config_param :extralabels, :hash, :default => {}
+    config_param :additional_labels, :hash, :default => {}
 
     # Overide from BufferedOutput
     def start
@@ -54,8 +54,8 @@ module Fluent
         }
         
         # Add extra labels from config_params
-        unless @extralabels.empty?
-          new_timber['client_trail'].merge!(@extralabels)
+        unless @additional_labels.empty?
+          new_timber['client_trail'].merge!(@additional_labels)
         end
 
         data['items'] << new_timber
