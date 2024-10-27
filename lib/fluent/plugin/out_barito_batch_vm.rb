@@ -14,6 +14,7 @@ module Fluent
     config_param :application_group_secret, :string, :default => nil
     config_param :application_name, :string, :default => nil
     config_param :produce_url, :string, :default => ''
+    config_param :additional_labels, :hash, :default => {}
 
     # Overide from BufferedOutput
     def start
@@ -34,6 +35,11 @@ module Fluent
       chunk.msgpack_each do |tag, time, record|
         trail = Fluent::Plugin::ClientTrail.new(false)
         timber = Fluent::Plugin::TimberFactory::create_timber(tag, time, record, trail)
+
+        # Add extra labels from config_params
+        unless @additional_labels.empty?
+          timber['client_trail'].merge!(@additional_labels)
+        end
 
         data['items'] << timber
       end
