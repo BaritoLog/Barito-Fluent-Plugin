@@ -1,5 +1,9 @@
 # Changelog
 
+**0.5.1**
+
+- rename extralabels field to `additional_labels`
+
 **0.5.0**
 
 - Add extralabels field for additional information on client trail. e.g cloud_service_provider or else.
