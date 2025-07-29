@@ -4,12 +4,16 @@
 
 [Fluentd](https://fluentd.org/) output plugin for [BaritoLog](https://github.com/BaritoLog).
 
+## Overview
+
+This Fluentd plugin enables you to send logs directly to Barito Log infrastructure. It supports both traditional VM deployments and Kubernetes environments with different output types optimized for each use case.
+
 ## Installation
 
 ### RubyGems
 
-```
-$ gem install fluent-plugin-barito
+```bash
+gem install fluent-plugin-barito
 ```
 
 ### Bundler
@@ -22,27 +26,41 @@ gem 'fluent-plugin-barito'
 
 And then execute:
 
-```
-$ bundle
+```bash
+bundle install
 ```
 
 ## Configuration
 
 You can generate configuration template:
 
+```bash
+fluent-plugin-config-format output barito
 ```
-$ fluent-plugin-config-format output barito
-```
 
-You can copy and paste generated documents here.
+### Configuration Parameters
 
-### Fluentd configuration example
+Before configuring the plugin, you'll need to obtain the following from your Barito Market:
 
-## Without Kubernetes
+- **Application Group Secret**: Your unique application group identifier
+- **Produce URL**: The endpoint URL for sending logs to Barito
+- **Application Name**: Your application identifier (for Kubernetes deployments)
+- **Cluster Name**: Your cluster identifier (for Kubernetes deployments)
 
-Use type `barito_vm` for deployment without kubernetes
+## Plugin Types
 
-```conf
+### VM/Traditional Deployment Configuration
+
+For traditional VM deployments where logs are sent individually.
+
+**Required Parameters:**
+
+- `application_secret`: Your application group secret from Barito Market
+- `produce_url`: The produce endpoint URL from Barito Market
+
+Use type `barito_vm` for deployment without Kubernetes:
+
+```xml
 <source>
   @type tail
   tag "barito"
@@ -63,10 +81,21 @@ Use type `barito_vm` for deployment without kubernetes
 </match>
 ```
 
-## With Kubernetes
-Change type to `barito_batch_k8s`.
+### Kubernetes Deployment Configuration
 
-```
+For Kubernetes deployments where logs are sent in batches for better performance.
+
+**Required Parameters:**
+
+- `name`: Container name identifier
+- `cluster_name`: Your cluster name
+- `application_name`: Your application name
+- `application_group_secret`: Your application group secret from Barito Market
+- `produce_url`: The batch produce endpoint URL from Barito Market
+
+Use type `barito_batch_k8s` for Kubernetes environments:
+
+```xml
 <match kubernetes.var.log.containers.server-**.log>
   @type barito_batch_k8s
   name test_container
@@ -90,8 +119,33 @@ Change type to `barito_batch_k8s`.
 </match>
 ```
 
-## Copyright
+## Troubleshooting
 
-* Copyright(c) 2018- BaritoLog
-* License
-  * Apache License, Version 2.0
+### Common Issues
+
+1. **Connection refused**: Verify the `produce_url` is correct and accessible
+2. **Authentication failed**: Check your `application_group_secret` is valid
+3. **Buffer overflow**: Adjust buffer settings based on your log volume
+
+### Debug Mode
+
+Add the following to your Fluentd configuration for debug logging:
+
+```xml
+<system>
+  log_level debug
+</system>
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -am 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+- Copyright(c) 2018-2025 BaritoLog
+- License: Apache License, Version 2.0
