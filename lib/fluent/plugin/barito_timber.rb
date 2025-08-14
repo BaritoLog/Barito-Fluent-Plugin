@@ -18,6 +18,13 @@ class Fluent::Plugin::TimberFactory
     message = record[MESSAGE_KEY] if record.is_a?(Hash) and record.has_key?(MESSAGE_KEY)
     client_trail = trail
 
+    # Determine timestamp to use
+    # Default to 'time' variable (Fluentd event time) formatted as string
+    effective_timestamp = Time.at(time).utc.strftime('%FT%TZ')
+    if record.is_a?(Hash) && record.key?('time')
+      effective_timestamp = record['time'] # Use record['time'] if it exists (overrides default)
+    end
+
     if message.nil? or message.empty? 
       message = record.to_s
       trail.hints << HINTS_NO_MESSAGE
@@ -25,7 +32,7 @@ class Fluent::Plugin::TimberFactory
 
     timber['tag'] =  tag
     timber['@message'] = message
-    timber['@timestamp'] = time
+    timber['@timestamp'] = effective_timestamp
     timber['client_trail'] = client_trail.to_hash
 
     timber    
