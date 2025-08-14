@@ -17,7 +17,6 @@ class Fluent::Plugin::TimberFactory
     # Capture default information
     message = record[MESSAGE_KEY] if record.is_a?(Hash) and record.has_key?(MESSAGE_KEY)
     client_trail = trail
-    timestamp = Time.now.utc.strftime('%FT%TZ')
 
     if message.nil? or message.empty? 
       message = record.to_s
@@ -26,7 +25,7 @@ class Fluent::Plugin::TimberFactory
 
     timber['tag'] =  tag
     timber['@message'] = message
-    timber['@timestamp'] = timestamp
+    timber['@timestamp'] = time
     timber['client_trail'] = client_trail.to_hash
 
     timber    
