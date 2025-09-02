@@ -1,5 +1,9 @@
 # Changelog
 
+**0.6.0**
+
+- put the actual log time on timber[@timestamp] record
+
 **0.5.1**
 
 - rename extralabels field to `additional_labels`
